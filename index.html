@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VueJs Todo List</title>
+    <link rel="stylesheet" href="asset/css/all.css" />
+    <link rel="stylesheet" href="asset/css/bootstrap.min.css" />
+  </head>
+  <body class="bg-light">
+    <div id="app">
+      <div class="bg-dark">
+        <div class="container py-4">
+          <h3 class="text-center text-light">
+            <b><i>VueJS Todo List</i></b>
+          </h3>
+          <br />
+          <div class="form-group">
+            <input
+              type="text"
+              class="form-control bg-light rounded-pill mx-auto"
+              placeholder="Enter Todo Item ..."
+              v-model="input"
+            />
+          </div>
+          <br />
+          <button
+            class="btn-block w-50 rounded-pill btn btn-warning mx-auto"
+            @click="addTodo"
+          >
+            ADD
+          </button>
+        </div>
+      </div>
+      <br />
+      <div class="container py-2">
+        <ul class="list-group">
+          <todo-item
+            v-for="(todo, index) in todos"
+            :key="todo"
+            :todo="todo"
+            @check="todo.compeleted = !todo.compeleted"
+            @delete-todo="deleteTodo(index)"
+          >
+          </todo-item>
+        </ul>
+      </div>
+    </div>
+
+    <script src="asset/vue.js"></script>
+    <script>
+      const app = Vue.createApp({
+        data: () => ({
+          input: "",
+          todos: [
+            { text: "First Item", compeleted: true },
+            { text: "Second Item", compeleted: false },
+          ],
+        }),
+        // end data
+
+        methods: {
+          addTodo() {
+            if (this.input.trim()) {
+              this.todos.push({ text: this.input, compeleted: false });
+              this.input = "";
+            }
+          },
+          // end addTodo
+
+          deleteTodo(index) {
+            this.todos.splice(index, 1);
+          },
+          // end deleteTodo
+        },
+        // end methods
+      });
+
+      app.component("TodoItem", {
+        template: `<li
+            
+            :class="todo.compeleted? 'list-group-item bg-dark text-light d-flex align-items-center':'list-group-item d-flex justify-content-between'"
+            
+            @click="$emit('check')"
+            style="transition: all 0.3s ease"
+          >
+            <i
+              :class="[todo.compeleted?'fa fa-check mr-1 text-success':'fa fa-check mr-1 text-light']"
+            ></i>
+            {{todo.text}}
+            <button class="btn ml-auto btn-sm" @click="$emit('delete-todo')">
+              <i class="fa fa-trash text-danger"></i>
+            </button>
+          </li>`,
+        props: ["todo"],
+      });
+
+      const vm = app.mount("#app");
+    </script>
+  </body>
+</html>
